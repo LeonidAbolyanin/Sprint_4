@@ -14,9 +14,9 @@ public class Header {
     // Кнопка "Статус заказа"
     private static final By orderStatusButton = By.className("Header_Link__1TAG7");
     // Поле ввода номера заказа
-    private static final By orderNumberInput = By.xpath("/html/body/div/div/div/div[1]/div[3]/div/input");
+    private static final By orderNumberInput = By.xpath("//input[@class='Input_Input__1iN_Z Header_Input__xIoUq']");
     // Кнопка "Go"
-    private static final By searchOrderButton = By.xpath("/html/body/div/div/div/div[1]/div[3]/button");
+    private static final By searchOrderButton = By.cssSelector("button.Button_Button__ra12g.Header_Button__28dPO");;
     //Кнопка "Заказать" в шапке
     private static final By orderHeaderButton = By.className("Button_Button__ra12g");
 

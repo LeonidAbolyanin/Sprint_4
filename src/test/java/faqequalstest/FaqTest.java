@@ -1,8 +1,7 @@
 package faqequalstest;
-import faqequalstest.Browser;
+import basetest.BaseTest;
 import model.MainPage;
-import org.junit.After;
-import org.junit.Before;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,9 +19,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class FaqTest {
-    private WebDriver driver;
-    public static final String BROWSER_NAME_ENV_VARIABLE = "BROWSER_NAME";
+public class FaqTest extends BaseTest {
 
     private int question;
     private String expectedAnswer;
@@ -31,37 +28,11 @@ public class FaqTest {
         this.question = question;
         this.expectedAnswer = expectedAnswer;
     }
-    private void setCookie(Cookie cookie) {
-        driver.manage().addCookie(cookie);
-    }
-    @Before
-    public void setUp() throws Exception {
-        String browserName = System.getenv(BROWSER_NAME_ENV_VARIABLE);
-        driver = getWebDriver(Browser.valueOf(browserName));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-    }
 
-    @After
-    public void after() {
-        driver.quit();
-    }
-
-    WebDriver getWebDriver(Browser browser) {
-        switch (browser) {
-            case CHROME:
-                return new ChromeDriver();
-            case FIREFOX:
-                return new FirefoxDriver();
-            case SAFARI:
-                return new SafariDriver();
-            default:
-                throw new RuntimeException("unable to create a web driver");
-        }
-    }
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {0, "Cутки — 400 рублей. Оплата курьеру — наличными или картой."},
+                {0, "Сутки — 400 рублей. Оплата курьеру — наличными или картой."},
                 {1, "Пока что у нас так: один заказ — один самокат. Если хотите покататься с друзьями, можете просто сделать несколько заказов — один за другим."},
                 {2, "Допустим, вы оформляете заказ на 8 мая. Мы привозим самокат 8 мая в течение дня. Отсчёт времени аренды начинается с момента, когда вы оплатите заказ курьеру. Если мы привезли самокат 8 мая в 20:30, суточная аренда закончится 9 мая в 20:30."},
                 {3, "Только начиная с завтрашнего дня. Но скоро станем расторопнее."},
@@ -80,23 +51,12 @@ public class FaqTest {
         setCookie(new Cookie("Cartoshka", "true"));
         setCookie(new Cookie("Cartoshka-legacy", "true"));
         driver.navigate().refresh();
-
         // Найдем элемент вопроса по его тексту и кликнем на него
-        WebElement element = driver.findElement(By.xpath(".//div[contains(@id,'accordion__heading-" + question + "')]/parent::div"));
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
-        element.click();
-
+        mainPage.clickOnTheQuestion(question);
         // Найдем соответствующий ответ
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        WebElement answerElement =
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//div[contains(@id,'accordion__panel-" + question + "')]/p")));
-        driver.findElement(By.xpath(".//div[contains(@id,'accordion__panel-" + question + "')]/p")).click();
-        String actualAnswer = answerElement.getText();
-
-        //System.out.println(actualAnswer);
-
+        mainPage.findAnswer(question);
         // Проверим, что ответ соответствует ожидаемому
-        assertEquals(expectedAnswer, actualAnswer);
+        assertEquals(expectedAnswer, mainPage.findAnswer(question));
     }
 }
 

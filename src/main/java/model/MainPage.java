@@ -24,87 +24,59 @@ public class MainPage {
     //универсальный локатор для ответов
     public static By answerNumber = By.xpath(".//div/div[@id='accordion__panel-" + questionIntNumber + "']/p");
 
-    public static By answerNumberZero = By.xpath("//*[@id='accordion__panel-0']");
-    public static By answerNumberOne = By.xpath("//*[@id='accordion__panel-1']");
-
     //Кнопка "Заказать" на странице
-    private static final By orderHeaderButtonOnPage = By.xpath("//*[@id='root']/div/div/div[4]/div[2]/div[5]/button");
+    private static final By orderHeaderButtonOnPage = By.xpath(".//div[@class=\"Home_FinishButton__1_cWm\"]/button[text()=\"Заказать\"]");
 
     protected static WebDriver driver;
 
     public MainPage(WebDriver driver) {
         MainPage.driver = driver;
     }
-
+    // Метод для открытия главной страницы
     public MainPage open() {
         driver.get(PAGE_URL);
         return this;
     }
-
+    // Метод для клика по кнопке "Статус заказа"
     public MainPage clickOrderStatusButton() {
         driver.findElement(ORDER_STATUS_BUTTON).click();
         return this;
     }
-
+    // Метод для ввода номера заказа в поле "Введите номер заказа"
     public MainPage enterNonExistingOrderNumber(String orderNumber) {
         driver.findElement(ORDER_NUMBER_INPUT_FIELD).sendKeys(orderNumber);
         return this;
     }
-
+    // Кликер кнопки "Го!" в шапке
     public MainPage clickGoButton() {
         driver.findElement(GO_BUTTON).click();
         return this;
     }
-
+    // Метод для проверки появления картинки "Неверный номер заказа"
     public boolean isImageNotFoundDisplayed() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         WebElement imageNotFound =
                 wait.until(ExpectedConditions.visibilityOfElementLocated(NOTFOUND_IMAGE));
         return imageNotFound.isDisplayed();
     }
-
-    // Кликатель по вопросу
-    public void clickQue(int questionIntNumber) {
-
-        WebElement element = driver.findElement(questionNumber);
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
-        element.click();
-    }
-
-    // Метод для получения текста из ответа
-    public static void getAnswerText(int questionIntNumber) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        String answer = driver.findElement(answerNumber).getText();
-        //element.click();
-        //driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
-
-    }
-
-    // Кликатель по кнопке заказать на страанице
+    // Кликатель по кнопке заказать на странице
     public MainPage clickOrderButtonOnPage() {
-        //WebElement element = driver.findElement(orderHeaderButtonOnPage);
-        //((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
-        //WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         driver.findElement(orderHeaderButtonOnPage).click();
         return this;
     }
-
-    // метод ожидания прогрузки
-    public void waitForLoadAnswer(int questionIntNumber) {
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(driver -> (driver.findElement(answerNumber).getText() != null
-                && !driver.findElement(answerNumber).getText().isEmpty()
-        ));
+    // Метод для клика на вопрос из раздела "Вопросы о важном
+    public MainPage clickOnTheQuestion(int questionFaq){
+    WebElement element = driver.findElement(By.xpath(".//div[contains(@id,'accordion__heading-" + questionFaq + "')]/parent::div"));
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
+        element.click();
+        return this;
     }
-
-    public static Object getAnswer(int questionIntNumber){
-        String text = driver.findElement(answerNumber).getText();
-        return text;
+    // Метод для поиска ответа на вопрос из раздела "Вопросы о важном"
+    public String findAnswer(int answerFaq){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement answerElement =
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//div[contains(@id,'accordion__panel-" + answerFaq + "')]/p")));
+        driver.findElement(By.xpath(".//div[contains(@id,'accordion__panel-" + answerFaq + "')]/p")).click();
+        return answerElement.getText();
     }
 }
-
-
-
-
-
-
-

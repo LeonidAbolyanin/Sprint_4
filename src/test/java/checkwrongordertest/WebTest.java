@@ -1,7 +1,8 @@
 package checkwrongordertest;
-
-import java.time.Duration;
+import basetest.BaseTest;
 import model.MainPage;
+import java.time.Duration;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +17,7 @@ import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class WebTest {
+public class WebTest extends BaseTest {
 
     private static final By ORDER_STATUS_BUTTON = By.xpath("//*[@class='Header_Link__1TAG7']");
     private static final By ORDER_NUMBER_INPUT_FIELD =
@@ -27,37 +28,7 @@ public class WebTest {
     public static final String ORDER_NUMBER = "824001";
     public static final String BROWSER_NAME_ENV_VARIABLE = "BROWSER_NAME";
 
-    private WebDriver driver;
 
-    private void setCookie(Cookie cookie) {
-        driver.manage().addCookie(cookie);
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        String browserName = System.getenv(BROWSER_NAME_ENV_VARIABLE);
-        driver = getWebDriver(Browser.valueOf(browserName));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-
-    }
-
-    @After
-    public void after() {
-        driver.quit();
-    }
-
-    WebDriver getWebDriver(Browser browser) {
-        switch (browser) {
-            case CHROME:
-                return new ChromeDriver();
-            case FIREFOX:
-                return new FirefoxDriver();
-            case SAFARI:
-                return new SafariDriver();
-            default:
-                throw new RuntimeException("unable to create a web driver");
-        }
-    }
 
     @Test
     public void checkOrderStatus_notFound_imageDisplayed() {
@@ -98,10 +69,4 @@ public class WebTest {
                         .isImageNotFoundDisplayed();
         Assert.assertTrue(imageNotFoundDisplayed);
     }
-}
-
-enum Browser {
-    CHROME,
-    FIREFOX,
-    SAFARI;
 }
